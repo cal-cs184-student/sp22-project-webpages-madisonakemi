@@ -38,17 +38,17 @@
 
           <h2 align="middle">Overview</h2>
           <p>
-              In this project, we built a mesh editor that can perform geometric operations such as curve and mesh editing. The first implementation allows for a Bezier curve to be made from a set of control points using de Casteljau's Algorithm. Building off of this, we were able to construct Bezier patches in 3D space. Another feature is triangle mesh editing using a half edge data structure. Our mesh editor can average mesh normals, flip edges, split edges, and perform Loop Subdivision. <br><br> The key takeaway from this project was realizing how many computations it really takes to edit a mesh. We are both 3D artists who use these operations regularly and this gave us a deeper understanding of how all of the data is calculated. Rather than just taking for granted the seemingly simple mesh manipulations, we can now appreciate and understand some of the engineering it takes to perform these tasks.
+              In this project, we built a mesh editor that can perform geometric operations such as curve and mesh editing. The first implementation allows for a Bezier curve to be made from a set of control points using de Casteljau's Algorithm. Building off of this, we were able to construct Bezier patches in 3D space. Another feature is triangle mesh editing using a half edge data structure. Our mesh editor can average mesh normals, flip edges, split edges, and perform Loop Subdivision. <br /><br /> The key takeaway from this project was realizing how many computations it really takes to edit a mesh. We are both 3D artists who use these operations regularly and this gave us a deeper understanding of how all of the data is calculated. Rather than just taking for granted the seemingly simple mesh manipulations, we can now appreciate and understand some of the engineering it takes to perform these tasks.
           </p>
 
           <h2 align="middle">Section I: Bezier Curves and Surfaces</h2>
 
           <h3 align="middle">Part 1: Bezier curves with 1D de Casteljau subdivision</h3>
 
-<!--           <p>
-              Here is an example 2x2 gridlike structure using an HTML table. Each <b>tr</b> is a row and each <b>td</b> is a
-              column in that row. You might find this useful for framing and showing your result images in an organized fashion.
-          </p> -->
+          <!--           <p>
+            Here is an example 2x2 gridlike structure using an HTML table. Each <b>tr</b> is a row and each <b>td</b> is a
+            column in that row. You might find this useful for framing and showing your result images in an organized fashion.
+        </p> -->
 
           <p>
               To implement Casteljau’s algorithm, we iterated through the list of points (size n) passed into the BezierCurve function n - 1 times.
@@ -78,9 +78,9 @@
                           <figcaption align="middle">4th iteration</figcaption>
                       </td>
                       <td>
-                      	<img src="images/curve6.png" align="middle" width="200px" />
-               			<figcaption align="middle">With curve</figcaption>
-               		</td>
+                          <img src="images/curve6.png" align="middle" width="200px" />
+                          <figcaption align="middle">With curve</figcaption>
+                      </td>
                   </tr>
                   <br />
                   <tr>
@@ -92,7 +92,7 @@
               <img src="images/curveModified.png" align="middle" width="400px" />
               <figcaption align="middle">Modified curve</figcaption>
           </div>
-         
+
 
           <h3 align="middle">Part 2: Bezier surfaces with separable 1D de Casteljau subdivision</h3>
 
@@ -105,7 +105,7 @@
                   <tr>
                       <td>
                           <img src="images/task2_teapot.png" align="middle" width="400px" />
-              				<figcaption align="middle">Teapot mesh evaluated by de Casteljau subdivision</figcaption>
+                          <figcaption align="middle">Teapot mesh evaluated by de Casteljau subdivision</figcaption>
                       </td>
                       <td>
                           <img src="images/teapot_wireframe.png" align="middle" width="480px" />
@@ -114,6 +114,7 @@
                   </tr>
                   <br />
                   <tr>
+                  </tr>
               </table>
           </div>
 
@@ -122,7 +123,7 @@
           <h3 align="middle">Part 3: Average normals for half-edge meshes</h3>
 
           <p>
-              For this part, we implemented area-weighted normal vectors at vertices, which can be used for Phong shading. This provides better shading for smooth surfaces rather than flat shading. To implement the area-weighted vertex normals, we used the HalfedgeCIter to go through each of the triangle elements. With the given reference to the half edge, we found the initial vertex position. From there, we iterated through the structure by finding the reference half edge’s twin and its root vertex. We then found the twin’s next half edge and its root vertex, giving us a total of 3 vertices. <br> <br> Using the twin’s vertex and next vertex, we calculated the vectors making up those edges and took the cross product. With each iteration through the neighboring triangles, we summed up the cross products to obtain the area-weighted sum of the normals. Finally, we normalized this sum.
+              For this part, we implemented area-weighted normal vectors at vertices, which can be used for Phong shading. This provides better shading for smooth surfaces rather than flat shading. To implement the area-weighted vertex normals, we used the HalfedgeCIter to go through each of the triangle elements. With the given reference to the half edge, we found the initial vertex position. From there, we iterated through the structure by finding the reference half edge’s twin and its root vertex. We then found the twin’s next half edge and its root vertex, giving us a total of 3 vertices. <br /> <br /> Using the twin’s vertex and next vertex, we calculated the vectors making up those edges and took the cross product. With each iteration through the neighboring triangles, we summed up the cross products to obtain the area-weighted sum of the normals. Finally, we normalized this sum.
           </p>
 
           <div align="middle">
@@ -130,7 +131,7 @@
                   <tr>
                       <td>
                           <img src="images/task3unshaded.png" align="middle" width="400px" />
-              				<figcaption align="middle">Teapot mesh with flat shading</figcaption>
+                          <figcaption align="middle">Teapot mesh with flat shading</figcaption>
                       </td>
                       <td>
                           <img src="images/task3shaded.png" align="middle" width="400px" />
@@ -139,6 +140,7 @@
                   </tr>
                   <br />
                   <tr>
+                  </tr>
               </table>
           </div>
 
@@ -146,15 +148,15 @@
           <h3 align="middle">Part 4: Half-edge flip</h3>
 
           <p>
-          	In task 4, we implemented a function that would allow the user to flip any given edge. To do this we first defined each of the surrounding half edges, vertices, edges, and faces given the passed in edge, e0. Once we defined the current mesh as variables within our algorithm, we then reassigned each half edge’s attributes after the passed in edge was flipped. Once we redefined our half edges, we then did the same for our vertices, edges, and faces. While implementing this code, our function would crash after trying to flip an edge. We found that this was because we were assuming the outer edges “next” and “face” based on the simplest case of only having two triangles. We then realized the outer edges’ “next”’ and “face” attributes would not change after the given edge was flipped, so we then adjusted our code to assign the half edge’s attributes to its current next and face pointers.
+              In task 4, we implemented a function that would allow the user to flip any given edge. To do this we first defined each of the surrounding half edges, vertices, edges, and faces given the passed in edge, e0. Once we defined the current mesh as variables within our algorithm, we then reassigned each half edge’s attributes after the passed in edge was flipped. Once we redefined our half edges, we then did the same for our vertices, edges, and faces. While implementing this code, our function would crash after trying to flip an edge. We found that this was because we were assuming the outer edges “next” and “face” based on the simplest case of only having two triangles. We then realized the outer edges’ “next”’ and “face” attributes would not change after the given edge was flipped, so we then adjusted our code to assign the half edge’s attributes to its current next and face pointers.
           </p>
 
-           <div align="middle">
+          <div align="middle">
               <table style="width=100%">
                   <tr>
                       <td>
                           <img src="images/beetle.png" align="middle" width="400px" />
-              				<figcaption align="middle">Original beetle mesh</figcaption>
+                          <figcaption align="middle">Original beetle mesh</figcaption>
                       </td>
                       <td>
                           <img src="images/beetle_flipped.png" align="middle" width="388px" />
@@ -163,21 +165,22 @@
                   </tr>
                   <br />
                   <tr>
+                  </tr>
               </table>
           </div>
 
           <h3 align="middle">Part 5: Half-edge split</h3>
 
           <p>
-          	In task 5, we created a function that would take in an edge, split it, and create a new edge across the original. To implement this edge split operation, we first collected all of the elements of the original mesh by defining the relationships between all the half edges (Ex. half0 = e0->halfedge()). We did the same to define the relationships between each vertex, edge, and face with their corresponding half edges.<br><br>Since the edge split involves creating new elements, we defined 3 new edges, 8 new half edges, 2 new faces, and 1 new vertex. For the new vertex, we calculated the midpoint between the edge being split and set this to be the new vertex’s position. <br><br>Lastly, we used the setNeighbors() function to reassign all the old and new half edges with their corresponding next half edge, twin half edge, root vertex, edge, and face. For the boundary half edges, we kept the original next half edges and faces since those would be outside of the current triangle. We could then reassign the vertices, edges, and faces to their corresponding half edges.
+              In task 5, we created a function that would take in an edge, split it, and create a new edge across the original. To implement this edge split operation, we first collected all of the elements of the original mesh by defining the relationships between all the half edges (Ex. half0 = e0->halfedge()). We did the same to define the relationships between each vertex, edge, and face with their corresponding half edges.<br /><br />Since the edge split involves creating new elements, we defined 3 new edges, 8 new half edges, 2 new faces, and 1 new vertex. For the new vertex, we calculated the midpoint between the edge being split and set this to be the new vertex’s position. <br /><br />Lastly, we used the setNeighbors() function to reassign all the old and new half edges with their corresponding next half edge, twin half edge, root vertex, edge, and face. For the boundary half edges, we kept the original next half edges and faces since those would be outside of the current triangle. We could then reassign the vertices, edges, and faces to their corresponding half edges.
           </p>
 
-           <div align="middle">
+          <div align="middle">
               <table style="width=100%">
                   <tr>
                       <td>
                           <img src="images/task5beforesplit.png" align="middle" width="400px" />
-              				<figcaption align="middle">Original teapot mesh</figcaption>
+                          <figcaption align="middle">Original teapot mesh</figcaption>
                       </td>
                       <td>
                           <img src="images/task5aftersplit.png" align="middle" width="388px" />
@@ -186,6 +189,7 @@
                   </tr>
                   <br />
                   <tr>
+                  </tr>
               </table>
           </div>
 
@@ -194,7 +198,7 @@
                   <tr>
                       <td>
                           <img src="images/task5beforesplitflip.png" align="middle" width="400px" />
-              				<figcaption align="middle">Original cow mesh</figcaption>
+                          <figcaption align="middle">Original cow mesh</figcaption>
                       </td>
                       <td>
                           <img src="images/task5aftersplitflip.png" align="middle" width="388px" />
@@ -203,12 +207,13 @@
                   </tr>
                   <br />
                   <tr>
+                  </tr>
               </table>
           </div>
 
           <p>
-          	In our first test run, we encountered a bug where, if we split one edge and then split the edge of an adjacent triangle, it would delete a neighboring face. 
-              After some time spent analyzing our code, we realized that we didn’t set the boundary half edges to their original faces. We had been reassigning them to faces inside the triangle. 
+              In our first test run, we encountered a bug where, if we split one edge and then split the edge of an adjacent triangle, it would delete a neighboring face.
+              After some time spent analyzing our code, we realized that we didn’t set the boundary half edges to their original faces. We had been reassigning them to faces inside the triangle.
           </p>
 
           <h3 align="middle">Part 6: Loop subdivision for mesh upsampling</h3>
@@ -403,12 +408,78 @@
 
 
           <h2 align="middle">Section III: Optional Extra Credit</h2>
-          <p>If you are not participating in the optional mesh competition, don't worry about this section!</p>
 
           <h3 align="middle">Part 7: Design your own mesh!</h3>
+          <br />
+ 
+          <p>
+              We applied our mesh editor to a pagoda we modeled in maya! To prepare our model to be brought into our program, we first had to triangulate the pagoda model’s mesh since we originally modeled it in quads.
+              Then in blender, we scaled up the pagoda to fit into our mesh edit viewport, centered its pivot, and adjusted the exposure of the file’s light source.
+              Bringing our pagoda into mesh edit, its edges were still very boxy and sharp.
+              Once we apply our subdivision tool to our mesh, these edges become a lot smoother, showcased by the phong shader we applied to the pagoda in maya.
+          </p>
+
+          <br />
+          <br />
+          <div align="middle">
+              <table style="width=100%">
+                  <tr>
+                      <td>
+                          <img src="images/pagoda_sub0.png" align="middle" width="400px" />
+                          <figcaption align="middle">Pagoda at SubLevel = 0 </figcaption>
+                      </td>
+                      <td>
+                          <img src="images/pagoda_sub0_w.png" align="middle" width="400px" />
+                          <figcaption align="middle">Pagoda at SubLevel = 0 Topology</figcaption>
+                      </td>
+                  </tr>
+                  <br />
+                  <tr>
+                  </tr>
+              </table>
+          </div>
+
+          <div align="middle">
+              <table style="width=100%">
+                  <tr>
+                      <td>
+                          <img src="images/pagoda_sub1.png" align="middle" width="400px" />
+                          <figcaption align="middle">Pagoda at SubLevel = 1</figcaption>
+                      </td>
+                      <td>
+                          <img src="images/pagoda_sub1_w.png" align="middle" width="400px" />
+                          <figcaption align="middle">Pagoda at SubLevel = 1 Topology</figcaption>
+                      </td>
+                  </tr>
+                  <br />
+                  <tr>
+                  </tr>
+              </table>
+          </div>
+
+          <div align="middle">
+              <table style="width=100%">
+                  <tr>
+                      <td>
+                          <img src="images/pagoda_sub2.png" align="middle" width="400px" />
+                          <figcaption align="middle">Pagoda at SubLevel = 2 </figcaption>
+                      </td>
+                      <td>
+                          <img src="images/pagoda_sub2_w.png" align="middle" width="400px" />
+                          <figcaption align="middle">Pagoda at SubLevel = 2 Topology</figcaption>
+                      </td>
+                  </tr>
+                  <br />
+                  <tr>
+                  </tr>
+              </table>
+          </div>
+          <br />
+          <br />
 
       </div></body>
+      <a href="https://cal-cs184-student.github.io/sp22-project-webpages-madisonakemi/proj2/index.html">
+https://cal-cs184-student.github.io/sp22-project-webpages-madisonakemi/proj2/index.html</a>
 
-      <p>https://cal-cs184-student.github.io/sp22-project-webpages-madisonakemi/</p>
 
 </html>
