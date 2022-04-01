@@ -1,7 +1,213 @@
-<html>
-	<head>
-	</head>
-	<body>
-		Project 3-2 here
-	</body>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<style>  
+    body {
+      padding: 100px;
+      width: 1000px;
+      margin: auto;
+      text-align: left;
+      font-weight: 300;
+      font-family: 'Open Sans', sans-serif;
+      color: #121212;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4 {
+      font-family: 'Source Sans Pro', sans-serif;
+    }
+  </style> 
+<title>Akemi Nagashiki & Christine Co  |  CS 184</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="style.css" media="screen" />
+</head>
+<body>
+
+<h1 align="middle">Assignment 3-2: PathTracer</h1>
+    <h2 align="middle">Akemi Nagashiki & Christine Co</h2>
+
+    <h2 align="middle">Overview</h2>
+    <div class="padded">
+        <p>
+            In this project we built upon our pathtracer to take into account various materials and depth of field. 
+            These parts of the project challenged us to think about how the ray would interact differently with a material or object in a 3D space given different physical conditions. 
+            For instance, when working on the depth of field task, our renderer would blur out the scene very uniformly. 
+            After many trials, we deducted that this was most likely an issue with how we were calculating the intersection of our ray and point in focus. 
+            Solving this issue, we broke down each line of code and figured out what each vector was contributing as a physical element of the light simulation. 
+            Overall, in order to troubleshoot this project, we found that being able to visualize our code and connect each equation back to the physical model allowed us to successfully implement these attributes of our renderer.
+        </p>
+
+        <h2 align="middle">Part 1: Ray Generation and Intersection</h2>
+        <p>For this part, we implemented the code for mirror, reflection, refraction, and glass BSDF materials. 
+        The first step was to create a reflect function that returns the reflection of a vector about its normal, which is (0, 0, 1) in object coordinate space. 
+        Next, we used the reflect function to help with our mirror function. 
+        The mirror function takes the vector outputted from the reflect function and divides it by the absolute value of the cosine of this vector with the normal. </p> 
+       
+        <p>Then, we made a refraction function that uses Snell’s Law to return a boolean value whether or not refraction occurs. 
+        If there is total internal reflection, then refraction does not occur. Using refraction, we created a sample_f function for a glass material. 
+        This function checks if there is refraction and then uses Schlick’s approximation to calculate the ratio of refraction to reflection energy. 
+        If there is total internal reflection (no refraction), then we return reflectance / abs_cos_theta(*wi). 
+        It also uses Schlick's approximation to find the coin flip probability of refraction or reflection.</p>
+
+        <div align="middle">
+            <table style="width=100%">
+                <tr>
+                    <td>
+                        <img src="images/part1_spheres_m0.png" align="middle" width="250px" />
+                        <figcaption align="middle">max ray depth = 0</figcaption>
+                    </td>
+                    <td>
+                        <img src="images/part1_spheres_m1.png" align="middle" width="250px" />
+                        <figcaption align="middle">max ray depth = 1</figcaption>
+                    </td>
+                    <td>
+                        <img src="images/part1_spheres_m2.png" align="middle" width="250px" />
+                        <figcaption align="middle">max ray depth = 2</figcaption>
+                    </td>
+                    <td>
+                        <img src="images/part1_spheres_m3.png" align="middle" width="250px" />
+                        <figcaption align="middle">max ray depth = 3</figcaption>
+                    </td>
+                </tr>
+                <br />
+                <tr>
+                </tr>
+            </table>
+        </div>
+
+        <div align="middle">
+            <table style="width=100%">
+                <tr>
+                    <td>
+                        <img src="images/part1_spheres_m4.png" align="middle" width="250px" />
+                        <figcaption align="middle">max ray depth = 4</figcaption>
+                    </td>
+                    <td>
+                        <img src="images/part1_spheres_m5.png" align="middle" width="250px" />
+                        <figcaption align="middle">max ray depth = 5</figcaption>
+                    </td>
+                    <td>
+                        <img src="images/part1_spheres_m100.png" align="middle" width="250px" />
+                        <figcaption align="middle">max ray depth = 100</figcaption>
+                    </td>
+                </tr>
+                <br />
+                <tr>
+                </tr>
+            </table>
+        </div>
+
+        <p>At m = 0, we only see the light being emitted from the light source to the camera. </p>
+        <p>At m = 1, we can see the effect of direct illumination. Since the spheres are not directly illuminated, they are completely black. </p>
+        <p>At m = 2, the mirror sphere is visible since light is bouncing off of it but the glass is still not visible because the max ray depth is not high enough to bounce through the material.</p>
+        <p>At m = 3, both the spheres are visible and there is refraction seen on the glass one. But, there is no light being cast onto its shadow and the glass sphere appears black in the mirror sphere’s reflection. </p>
+        <p>At m = 4, there is light going through the glass sphere and onto its shadow and the mirror’s reflection shows a glass ball.</p>
+        <p>At m = 5, the overall illumination is brighter and there is more light being reflected back from the ground onto the bottom of the glass sphere and light is refracted onto the wall.</p>
+        <p>At m = 100, again the overall image is brighter and there are more regions where the color from the walls is being reflected onto the spheres because there are more bounces of light.</p>
+
+        <div align="middle">
+            <img src="images/part1_lucy_m100.png" align="middle" width="400px" />
+            <figcaption align="middle">CBlucy.dae showing the glass material</figcaption>
+        </div>
+
+
+        <h2 align="middle">Part 4: Depth of Field</h2>
+
+        <p>
+            When using the pinhole camera model, our camera focuses evenly across the whole image, not taking into account the camera's depth of field. Without the thin lens, the ray directly hits the point in focus and the only radiance it receives comes from the image plane. On the other hand, when we use the thin-lens camera model, the ray from the image plane hits the thin-lens and then hits the point in focus. As a result, the radiance received at the point of focus will also be impacted by the refraction of the ray passing through the thin lens. We can change which parts of the scene will be in focus or not based on the lens radius and focal distance since these attributes change how the ray will refract through the thin lens.
+        </p>
+
+        <br />
+        <br />
+
+        <p>
+            The lens radius acts as the aperture of the camera. Thus, the smaller the lens radius, the less light that will be let in and the sharper the image will be.Therefore, a larger lens radius will put the image more out of focus.
+           <br />
+            Below we set our focal distance as 4.6 and rendered our dragon using different lens radii : 0.08, 0.15, 0.32, and 0.4.
+
+        </p>
+
+        <div align="middle">
+            <table style="width=100%">
+                <tr>
+                    <td>
+                        <img src="images/part4_dragon_b.08.png" align="middle" width="250px" />
+                        <figcaption align="middle">lens radius = 0.08</figcaption>
+                    </td>
+                    <td>
+                        <img src="images/part4_dragon_b0.15.png" align="middle" width="250px" />
+                        <figcaption align="middle">lens radius = 0.15</figcaption>
+                    </td>
+                    <td>
+                        <img src="images/part4_dragon_b0.32.png" align="middle" width="250px" />
+                        <figcaption align="middle">lens radius = 0.32</figcaption>
+                    </td>
+                    <td>
+                        <img src="images/part4_dragon_b0.40.png" align="middle" width="250px" />
+                        <figcaption align="middle">lens radius = 0.40</figcaption>
+                    </td>
+                </tr>
+                <br />
+                <tr>
+                </tr>
+            </table>
+        </div>
+
+        <p>
+            The focal distance determines the depth at which our camera will focus. For a smaller focal distance, our camera will focus on the foreground and blur out the background. Meanwhile, when the focal distance is higher, our camera will focus on the back and blur out the front.
+
+            <br />
+            Below, we set our lens radius at 0.04 and incremented our focal distance by 0.5 starting at 1.0.
+        </p>
+
+        <div align="middle">
+            <table style="width=100%">
+                <tr>
+                    <td>
+                        <img src="images/CBdragon_1_b04_d1.0.png" align="middle" width="300px" />
+                        <figcaption align="middle">focal distance = 1.0</figcaption>
+                    </td>
+                    <td>
+                        <img src="images/CBdragon_1_b04_d1.5.png" align="middle" width="300px" />
+                        <figcaption align="middle">focal distance = 1.5</figcaption>
+                    </td>
+                    <td>
+                        <img src="images/CBdragon_1_b04_d2.0.png" align="middle" width="300px" />
+                        <figcaption align="middle">focal distance = 2.0</figcaption>
+                    </td>
+                </tr>
+                <br />
+                <tr>
+                    <td>
+                        <img src="images/CBdragon_1_b04_d2.5.png" align="middle" width="300px" />
+                        <figcaption align="middle">focal distance = 2.5</figcaption>
+                    </td>
+                    <td>
+                        <img src="images/CBdragon_1_b04_d3.0.png" align="middle" width="300px" />
+                        <figcaption align="middle">focal distance = 3.0</figcaption>
+                    </td>
+                    <td>
+                        <img src="images/CBdragon_1_b04_d3.5.png" align="middle" width="300px" />
+                        <figcaption align="middle">focal distance = 3.5</figcaption>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <br />
+
+        <p>
+            Throughout this project, we each approached a different task. Then once we made a first attempt, we could look over and help debug the opposite task. This allowed us to still have a comprehensive understanding of each other's tasks and finish the project efficiently. Additionally, when one person got stuck, this method was useful in having someone with fresh eyes look at the other's code to help debug. Through this project, we learned the importance of connecting our logic back to the physical representation of our implementation.
+        </p>
+
+    </div>
+
+    <a href="https://cal-cs184-student.github.io/sp22-project-webpages-madisonakemi/">https://cal-cs184-student.github.io/sp22-project-webpages-madisonakemi/</a>
+</body>
 </html>
+
+
+
+
